@@ -12,12 +12,14 @@ public class PenggunaService {
 
     private PenggunaRepository penggunaRepository;
 
+    public PenggunaService() {
+    }
 
     public PenggunaService(PenggunaRepository penggunaRepository) {
         this.penggunaRepository = penggunaRepository;
     }
 
-    public Pengguna getAll() {
+    public List<Pengguna> getAll() {
         try{return penggunaRepository.getAll();}
         catch (Exception e){
             throw new RuntimeException(e);
@@ -32,5 +34,15 @@ public class PenggunaService {
             throw new RuntimeException(e);
         }
     }
+
+    public void delete(String Id) {
+        try{
+            penggunaRepository.delete(Id);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

@@ -5,7 +5,7 @@ public class Pengguna {
 
     private String nama;
     private String Email;
-    private Integer saldoAwal;
+    private Integer saldo;
 
     public Pengguna() {
     }
@@ -27,11 +27,11 @@ public class Pengguna {
     }
 
     public Integer getSaldoAwal() {
-        return saldoAwal;
+        return saldo;
     }
 
-    public void setSaldoAwal(Integer saldoAwal) {
-        this.saldoAwal = saldoAwal;
+    public void setSaldoAwal(Integer saldo) {
+        this.saldo = saldo;
     }
 
     public String getNama() {
@@ -46,7 +46,7 @@ public class Pengguna {
         return "Pengguna{" +
                 ", nama='" + nama + '\'' +
                 ", Email='" + Email + '\'' +
-                ", saldoAwal=" + saldoAwal +
+                ", saldo=" + saldo +
                 '}';
     }
 }

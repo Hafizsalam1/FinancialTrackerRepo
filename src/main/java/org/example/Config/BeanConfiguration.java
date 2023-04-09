@@ -9,9 +9,11 @@ import org.example.Service.PenggunaService;
 import org.example.Util.RandomUUID;
 import org.example.Util.stringToDate;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 
-@Component
+
+@Configuration
 public class BeanConfiguration {
     @Value("org.postgresql.Driver")
     private String dbDriver;
@@ -43,18 +46,19 @@ public class BeanConfiguration {
     @Bean
     @Scope("singleton")
     public CatatanKeuanganRepository getRepository(){
-        return new CatatanKeuanganRepository(dataSource());
+        return new CatatanKeuanganRepository(dataSource(), getRepositoryPengguna());
     }
 
     @Bean
     @Scope("singleton")
     public CatatanKeuanganService getService(){
         return new CatatanKeuanganService(getRepository());
+
     }
 
     @Bean
     @Scope("singleton")
-    public CatatanKeuanganController getController(){return new CatatanKeuanganController(getService());}
+    public CatatanKeuanganController getController(){return new CatatanKeuanganController(modelMapper(), getService(), getServicePengguna());}
 
     @Bean
     @Scope("singleton")
@@ -65,6 +69,7 @@ public class BeanConfiguration {
     @Bean
     @Scope("singleton")
     public PenggunaService getServicePengguna(){
+        PenggunaService penggunaService = new PenggunaService(getRepositoryPengguna());
         return new PenggunaService(getRepositoryPengguna());
     }
 
@@ -72,6 +77,8 @@ public class BeanConfiguration {
     @Scope("singleton")
     public PenggunaCotroller getControllerPengguna(){
         return new PenggunaCotroller(getServicePengguna());}
+
+
 
     @Bean
     public RandomUUID getRandomUUID(){

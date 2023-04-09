@@ -1,4 +1,4 @@
-package org.example.Model.Request;
+package org.example.Model.DTO;
 
 import org.example.Util.JenisKegiatan;
 
@@ -61,5 +61,17 @@ public class CatatanKeuanganKeseluruhan {
 
     public void setSaldoTotal(Integer saldoTotal) {
         this.saldoTotal = saldoTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "CatatanKeuanganKeseluruhan{" +
+                "id='" + id + '\'' +
+                ", namaKegiatanFinansial='" + namaKegiatanFinansial + '\'' +
+                ", jenisKegiatan=" + jenisKegiatan +
+                ", besarnya=" + besarnya +
+                ", date=" + date +
+                ", saldoTotal=" + saldoTotal +
+                '}';
     }
 }

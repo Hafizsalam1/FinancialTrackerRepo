@@ -16,7 +16,7 @@ public class PenggunaCotroller {
     }
 
     public void findAll() {
-        Pengguna pengguna = penggunaService.getAll();
+        List<Pengguna> pengguna = penggunaService.getAll();
         System.out.println(pengguna);
     }
 
@@ -24,6 +24,11 @@ public class PenggunaCotroller {
         penggunaService.create(pengguna);
         System.out.println("Berhasil menambahkan pengguna!");
         System.out.println(pengguna);
+    }
+
+    public void delete(String id) throws Exception{
+        penggunaService.delete(id);
+        System.out.println("Berhasil menghapus data pengguna");
     }
 
 }

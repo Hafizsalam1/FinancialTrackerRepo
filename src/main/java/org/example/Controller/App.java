@@ -9,6 +9,7 @@ import org.example.Util.JenisKegiatan;
 import org.example.Util.stringToDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Date;
 import java.util.List;
@@ -16,17 +17,18 @@ import java.util.Scanner;
 
 public class App {
 
-    @Autowired
-    private stringToDate stringToDate;
+
     AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(BeanConfiguration.class);
     CatatanKeuanganController catatanKeuanganController = ctx.getBean(CatatanKeuanganController.class);
     PenggunaCotroller penggunaCotroller = ctx.getBean(PenggunaCotroller.class);
     PenggunaService penggunaService = ctx.getBean(PenggunaService.class);
 
+
+
+
     public void Run() throws Exception {
 
-
-        if (penggunaService.getAll() == null) {
+        if(penggunaService.getAll().isEmpty()){
             System.out.println("Selamat Datang di applikasi financial tracker");
             System.out.println("Masukkan nama lengkapmu");
             Scanner nama_lengkap = new Scanner(System.in);
@@ -44,12 +46,14 @@ public class App {
             pengguna.setSaldoAwal(saldo1);
             penggunaCotroller.create(pengguna);
             menuUtama();
-        } else {
-            menuUtama();
 
         }
+        else {
+            menuUtama();
+        }
 
-    }
+            }
+
         public void menuUtama() throws Exception {
 
             while (true) {
@@ -61,8 +65,13 @@ public class App {
                 System.out.println("6. Hapus catatan finansial berdasarkan id");
                 System.out.println("7. Hapus semua catatan finansial");
                 System.out.println("8. Cari catatan berdasarkan id");
-                System.out.println("9. Set catatan rutin bulanan");
-                System.out.println("10. Hapus catatan rutin bulanan");
+                System.out.println("9. Info Pengguna");
+                System.out.println("10. Hapus Pengguna");
+                System.out.println("11. Keluar");
+                System.out.println("Masukkan menu yang diinginkan!");
+
+
+
 
 
                 Scanner input = new Scanner(System.in);
@@ -79,8 +88,13 @@ public class App {
                         catatanKeuanganController.laporanHarian(input3);
                         break;
                     case 3:
+                        System.out.println("Masukkan bulan dari catatan finansial yang ingin dilihat");
                         Scanner input4 = new Scanner(System.in);
-                        int input6 = Integer.parseInt(input4.nextLine());
+                        int bulan= Integer.parseInt(input4.nextLine());
+                        System.out.println("Masukkan tahun dari catatan finansial yang ingin dilihat");
+                        Scanner tahun = new Scanner(System.in);
+                        int tahun1 = Integer.parseInt(tahun.nextLine());
+                        catatanKeuanganController.laporanBulanan(bulan, tahun1);
                         break;
                     case 4:
                         CatatanKeuangan catatanKeuangan = new CatatanKeuangan();
@@ -128,7 +142,7 @@ public class App {
                         break;
 
                     case 6:
-                        System.out.println("Masukkan id dari kegiatan finansial yang ingin dihapus");
+                        System.out.println("Masukkan id dari catatan finansial yang ingin dihapus");
                         Scanner input18 = new Scanner(System.in);
                         String id1 = new String(input18.nextLine());
                         catatanKeuanganController.delete(id1);
@@ -137,6 +151,25 @@ public class App {
                     case 7:
                         catatanKeuanganController.deleteAll();
                         break;
+
+                    case 8:
+                        System.out.println("Masukkan id dari catatan finansial yang dicari");
+                        Scanner input19 = new Scanner(System.in);
+                        String id2 = new String(input19.nextLine());
+                        catatanKeuanganController.delete(id2);
+                        break;
+
+                    case 9:
+                        System.out.println(penggunaService.getAll().get(0));
+                        break;
+                    case 10:
+                        penggunaCotroller.delete(penggunaService.getAll().get(0).getId());
+                        catatanKeuanganController.deleteAll();
+                        Run();
+                        break;
+
+                    case 11:
+                        System.exit(0);
                 }
 
 
