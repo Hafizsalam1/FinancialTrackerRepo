@@ -38,7 +38,6 @@ public class CatatanKeuanganRepository {
     private final String SQL_TOTAL_PEMASUKAN_BULAN_INI = "select sum (BESARNYA) from finplan where pemasukan_atau_pengeluaran = 'pemasukan' and extract(month from tanggal) = ? and extract(year from tanggal) = ?";
     private final String SQL_TOTAL_PENGELUARAN_BULAN_INI = "select sum (BESARNYA) from finplan where pemasukan_atau_pengeluaran = 'pengeluaran' and extract(month from tanggal) = ? and extract(year from tanggal) = ?";
     private final String SQL_LIST_BULAN_INI = "SELECT*from finplan where EXTRACT(MONTH FROM tanggal) = ? AND EXTRACT(YEAR FROM tanggal)=?";
-//    private final String SQL_LIST_HARI_INI = "SELECT*from finplan where tanggal = ?";
 
 
 
@@ -102,9 +101,6 @@ public class CatatanKeuanganRepository {
         return jdbcTemplate.query(SQL_LIST_BULAN_INI, new CatatanKeuanganMapper(), bulan, tahun);
     }
 
-//    public List<CatatanKeuangan>listHarian(Date tanggal){
-//        return jdbcTemplate.query(SQL_LIST_HARI_INI, new CatatanKeuanganMapper(), tanggal);
-//    }
 
     public Integer pengeluaranHarian(Date tanggal){
         try{
