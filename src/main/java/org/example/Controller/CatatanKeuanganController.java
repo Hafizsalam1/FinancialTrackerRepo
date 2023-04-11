@@ -4,6 +4,7 @@ import org.example.Model.DTO.CatatanKeuanganKeseluruhan;
 import org.example.Model.DTO.LaporanBulanan;
 import org.example.Model.DTO.LaporanHarian;
 import org.example.Model.Entity.CatatanKeuangan;
+import org.example.Repository.CatatanKeuanganRepository;
 import org.example.Service.CatatanKeuanganService;
 import org.example.Service.PenggunaService;
 import org.example.Util.JenisKegiatan;
@@ -31,8 +32,7 @@ public class CatatanKeuanganController {
 
     public void findAll() {
         List<CatatanKeuangan> catatanKeuangan = catatanKeuanganService.getAll();
-        System.out.println(catatanKeuangan);
-
+        catatanKeuangan.stream().forEach(System.out::println);
     }
 
     public void create (CatatanKeuangan catatanKeuangan) throws Exception{
@@ -44,20 +44,10 @@ public class CatatanKeuanganController {
         System.out.println(catatanKeuanganKeseluruhan);
 }
 
-    public void update (CatatanKeuangan catatanKeuangan, String id) throws Exception {
-        Integer besarUpdateSebelumnya = catatanKeuanganService.findById(id).getBesarnya();
-        catatanKeuanganService.update(catatanKeuangan, id);
-        CatatanKeuangan catatanKeuangan1 = catatanKeuanganService.findById(id);
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        CatatanKeuanganKeseluruhan catatanKeuanganKeseluruhan  = modelMapper.map(catatanKeuangan1, CatatanKeuanganKeseluruhan.class);
-            System.out.println("Berhasil memperbarui catatan!");
-            System.out.println(catatanKeuangan1);
-    }
-
 
     public void delete (String id) throws Exception {
-            catatanKeuanganService.delete(id);
             CatatanKeuangan catatanKeuangan = catatanKeuanganService.findById(id);
+            catatanKeuanganService.delete(id);
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             CatatanKeuanganKeseluruhan catatanKeuanganKeseluruhan  = modelMapper.map(catatanKeuangan, CatatanKeuanganKeseluruhan.class);
             System.out.println("Berhasil menghapus catatan!");
@@ -68,48 +58,31 @@ public class CatatanKeuanganController {
         List<CatatanKeuangan> catatanKeuangan = catatanKeuanganService.laporanHarian(tanggal);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         LaporanHarian laporanHarian = modelMapper.map(catatanKeuangan, LaporanHarian.class);
-        Integer PemasukanAkhirHari = 0;
-        Integer PengeluaranAkhirHari = 0;
+        Integer pemasukHarian = catatanKeuanganService.pemasukanHarian(tanggal);
+        Integer pengeluaranHarian = catatanKeuanganService.pengeluaranHarian(tanggal);
 
-        for (CatatanKeuangan cat : catatanKeuangan) {
-                if(cat.getJenisKegiatan().equals(JenisKegiatan.pemasukan)){
-                    PemasukanAkhirHari = PemasukanAkhirHari + cat.getBesarnya();
-                }
-                else if(cat.getJenisKegiatan().equals(JenisKegiatan.pengeluaran)){
-                    PengeluaranAkhirHari = PengeluaranAkhirHari + cat.getBesarnya();
-                }
-        }
         laporanHarian.setLaporanHarian(catatanKeuangan);
-        laporanHarian.setPemasukanAkhirHari(PemasukanAkhirHari);
-        laporanHarian.setPengeluaranAkhirHari(PengeluaranAkhirHari);
+        laporanHarian.setPemasukanAkhirHari(pemasukHarian);
+        laporanHarian.setPengeluaranAkhirHari(pengeluaranHarian);
         System.out.println("Berhasil mendapatkan laporan harian!");
         laporanHarian.getLaporanHarian().stream().forEach(System.out::println);
-        System.out.println("Pemasukan pada hari yang dicari: "  + " " + laporanHarian.getPemasukanAkhirHari());
-        System.out.println("Pengeluaran pada hari yang dicari:"  + " " + laporanHarian.getPengeluaranAkhirHari());
+        System.out.println("Total pemasukan pada hari yang dicari: "  + " " + laporanHarian.getPemasukanAkhirHari());
+        System.out.println("Total pengeluaran pada hari yang dicari:"  + " " + laporanHarian.getPengeluaranAkhirHari());
     }
 
     public void laporanBulanan (Integer bulan, Integer tahun) throws Exception {
         List<CatatanKeuangan> catatanKeuangan = catatanKeuanganService.laporanBulanan(bulan, tahun);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         LaporanBulanan laporanBulanan = modelMapper.map(catatanKeuangan, LaporanBulanan.class);
-        Integer PemasukanSatuBulan = 0;
-        Integer PengeluaranSatuBulan = 0;
-        for (CatatanKeuangan cat : catatanKeuangan) {
-                if(cat.getJenisKegiatan().equals(JenisKegiatan.pemasukan)){
-                    PemasukanSatuBulan = PemasukanSatuBulan + cat.getBesarnya();
-                }
-                else if(cat.getJenisKegiatan().equals(JenisKegiatan.pengeluaran)){
-                    PengeluaranSatuBulan = PengeluaranSatuBulan + cat.getBesarnya();
-                }
-        }
-
+        Integer PemasukanSatuBulan = catatanKeuanganService.pemasukanBulanan(bulan, tahun);
+        Integer PengeluaranSatuBulan = catatanKeuanganService.pengeluaranBulanan(bulan, tahun);
         laporanBulanan.setLaporanBulanan(catatanKeuangan);
         laporanBulanan.setPemasukanSatuBulan(PemasukanSatuBulan);
         laporanBulanan.setPengeluaranSatuBulan(PengeluaranSatuBulan);
         System.out.println("Berhasil mendapatkan laporan bulanan!");
         laporanBulanan.getLaporanBulanan().stream().forEach(System.out::println);
-        System.out.println("Pemasukan selama bulan dan tahun yang dicari: "  + " " + laporanBulanan.getPemasukanSatuBulan());
-        System.out.println("Pengeluaran selama bulan dan tahun yang dicari: "  + " " + laporanBulanan.getPengeluaranSatuBulan());
+        System.out.println("Total pemasukan selama bulan dan tahun yang dicari: "  + " " + laporanBulanan.getPemasukanSatuBulan());
+        System.out.println("Total pengeluaran selama bulan dan tahun yang dicari: "  + " " + laporanBulanan.getPengeluaranSatuBulan());
     }
 
     public void findId(String id) throws Exception {

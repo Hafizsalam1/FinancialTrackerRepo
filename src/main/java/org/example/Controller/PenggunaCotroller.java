@@ -26,8 +26,8 @@ public class PenggunaCotroller {
         System.out.println(pengguna);
     }
 
-    public void delete(String id) throws Exception{
-        penggunaService.delete(id);
+    public void delete() throws Exception{
+        penggunaService.delete();
         System.out.println("Berhasil menghapus data pengguna");
     }
 

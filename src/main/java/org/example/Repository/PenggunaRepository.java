@@ -19,7 +19,7 @@ public class PenggunaRepository {
 
     private final String SQL_INSERT_PENGGUNA= "insert into pengguna values(?, ?, ?, ?)";
 
-    private final String SQL_DELETE = "delete from pengguna where id = ?";
+    private final String SQL_DELETE = "truncate table pengguna";
 
 
 
@@ -42,8 +42,8 @@ public class PenggunaRepository {
         return pengguna;
     }
 
-    public void delete(String id) throws Exception {
-        jdbcTemplate.update(SQL_DELETE, id);
+    public void delete() throws Exception {
+        jdbcTemplate.update(SQL_DELETE);
     }
 
 

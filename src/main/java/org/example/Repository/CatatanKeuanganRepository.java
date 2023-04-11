@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,10 +30,18 @@ public class CatatanKeuanganRepository {
     private final String SQL_GET_ALL = "select*from finplan";
     private final String SQL_INSERT_FINPLAN= "insert into finplan values(?, ?, ?, ?, ?)";
     private final String SQL_DELETE = "delete from finplan where id = ?";
-    private final String SQL_UPDATE_FINPLAN= "update finplan set namaKegiatanFinansial = ?, tanggal = ?, besarnya = ?, pemasukan_atau_pengeluaran = ? where id =?";
     private final String SQL_FIND_BY_ID = "select*from finplan where id = ?";
     private final String SQL_DELETE_ALL = "truncate table finplan";
     private final String SQL_CHANGE_SALDO = "update pengguna set saldo = ? where id =?";
+    private final String SQL_TOTAL_PEMASUKAN_HARI_INI = "select sum (besarnya) from finplan where pemasukan_atau_pengeluaran = 'pemasukan' and tanggal = ?";
+    private final String SQL_TOTAL_PENGELUARAN_HARI_INI = "select sum (besarnya) from finplan where pemasukan_atau_pengeluaran = 'pengeluaran' and tanggal = ?";
+    private final String SQL_TOTAL_PEMASUKAN_BULAN_INI = "select sum (BESARNYA) from finplan where pemasukan_atau_pengeluaran = 'pemasukan' and extract(month from tanggal) = ? and extract(year from tanggal) = ?";
+    private final String SQL_TOTAL_PENGELUARAN_BULAN_INI = "select sum (BESARNYA) from finplan where pemasukan_atau_pengeluaran = 'pengeluaran' and extract(month from tanggal) = ? and extract(year from tanggal) = ?";
+    private final String SQL_LIST_BULAN_INI = "SELECT*from finplan where EXTRACT(MONTH FROM tanggal) = ? AND EXTRACT(YEAR FROM tanggal)=?";
+//    private final String SQL_LIST_HARI_INI = "SELECT*from finplan where tanggal = ?";
+
+
+
 
 
     public CatatanKeuanganRepository(DataSource dataSource, PenggunaRepository penggunaRepository) {
@@ -62,24 +71,75 @@ public class CatatanKeuanganRepository {
         return catatanKeuangan;
     }
 
-    public void update(CatatanKeuangan catatanKeuangan, String id) throws Exception {
-            jdbcTemplate.update(SQL_UPDATE_FINPLAN,id );
-    }
 
     public void delete(String id) throws Exception {
+        Integer saldoDihapus = findByid(id).getBesarnya();
             jdbcTemplate.update(SQL_DELETE, id);
-            int result1 = jdbcTemplate.update(SQL_CHANGE_SALDO, (penggunaRepository.getAll().get(0).getSaldoAwal() + findByid(id).getBesarnya()), penggunaRepository.getAll().get(0).getId());
+            jdbcTemplate.update(SQL_CHANGE_SALDO, (penggunaRepository.getAll().get(0).getSaldoAwal() + saldoDihapus), penggunaRepository.getAll().get(0).getId());
     }
 
-    public void deleteAll() throws Exception {
+    public void deleteAll() {
             jdbcTemplate.update(SQL_DELETE_ALL);
 
     }
 
 
-    public CatatanKeuangan findByid(String id) throws Exception {
-        return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new CatatanKeuanganMapper(), id);
+    public CatatanKeuangan findByid(String id) {
+        return  jdbcTemplate.queryForObject(SQL_FIND_BY_ID, new CatatanKeuanganMapper(), id);
     }
+
+    public Integer pemasukanHarian(Date tanggal){
+        try{
+            return jdbcTemplate.queryForObject(SQL_TOTAL_PEMASUKAN_HARI_INI, new Object[]{tanggal}, Integer.class);
+        }
+        catch (DataAccessException e){
+            return null;
+        }
+
+    }
+
+    public List<CatatanKeuangan>listBulanan(Integer bulan, Integer tahun){
+        return jdbcTemplate.query(SQL_LIST_BULAN_INI, new CatatanKeuanganMapper(), bulan, tahun);
+    }
+
+//    public List<CatatanKeuangan>listHarian(Date tanggal){
+//        return jdbcTemplate.query(SQL_LIST_HARI_INI, new CatatanKeuanganMapper(), tanggal);
+//    }
+
+    public Integer pengeluaranHarian(Date tanggal){
+        try{
+            return jdbcTemplate.queryForObject(SQL_TOTAL_PENGELUARAN_HARI_INI, new Object[]{tanggal}, Integer.class);
+        }
+        catch (DataAccessException e){
+            return null;
+        }
+    }
+
+    public Integer pengeluaranBulanan(Integer bulan, Integer tahun ){
+
+        try{
+            return jdbcTemplate.queryForObject(SQL_TOTAL_PENGELUARAN_BULAN_INI, new Object[]{bulan, tahun}, Integer.class);
+        }
+        catch (DataAccessException e){
+            return null;
+        }
+
+    }
+
+    public Integer pemasukanBulanan(Integer bulan, Integer tahun ){
+
+        try{
+            return jdbcTemplate.queryForObject(SQL_TOTAL_PEMASUKAN_BULAN_INI, new Object[]{bulan, tahun}, Integer.class);
+        }
+        catch (DataAccessException e){
+            return null;
+        }
+
+    }
+
+
+
+
 
 
 

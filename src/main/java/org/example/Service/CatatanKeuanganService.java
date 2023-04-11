@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CatatanKeuanganService {
 
@@ -33,19 +35,9 @@ public class CatatanKeuanganService {
         }
     }
 
-    public void update(CatatanKeuangan catatanKeuangan, String Id) {
-        try{
-            catatanKeuanganRepository.update(catatanKeuangan, Id);
-        }
-        catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
     public CatatanKeuangan findById(String id) throws Exception {
         try{
-            CatatanKeuangan catatanKeuangan = catatanKeuanganRepository.findByid(id);
-            return catatanKeuangan;
+            return catatanKeuanganRepository.findByid(id);
         }
         catch (Exception e){
             throw new RuntimeException(e);
@@ -71,20 +63,18 @@ public class CatatanKeuanganService {
         }
     }
 
-    public List<CatatanKeuangan> laporanHarian(Date date) throws Exception {
+    public List<CatatanKeuangan> laporanHarian(Date tanggal) throws Exception {
         try{
-            List<CatatanKeuangan> catatanKeuangan = getAll();
-            List<CatatanKeuangan>laporanHarian = new ArrayList<>();
-            for (CatatanKeuangan cat: catatanKeuangan) {
-                if(cat.getDate().equals(date)){
-                    laporanHarian.add(cat);
-                }
-            }
-            if(laporanHarian.isEmpty()){
+            List<CatatanKeuangan>laporanHarian = catatanKeuanganRepository.getAll();
+            List<CatatanKeuangan>laporanHarian1 = laporanHarian.stream()
+                    .filter(e->e.getDate().equals(tanggal))
+                    .collect(Collectors.toList());
+
+            if(laporanHarian1.isEmpty()){
                 throw new RuntimeException("Tidak ada catatan pada tanggal ini");
             }
             else{
-                return laporanHarian;
+                return laporanHarian1;
             }
         }
         catch (Exception e){
@@ -95,16 +85,7 @@ public class CatatanKeuanganService {
 
     public List<CatatanKeuangan> laporanBulanan(Integer bulan, Integer tahun) throws Exception {
         try{
-            List<CatatanKeuangan> catatanKeuangan = getAll();
-            List<CatatanKeuangan>laporanBulanan = new ArrayList<>();
-            for (CatatanKeuangan cat: catatanKeuangan) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(cat.getDate());
-
-                if(calendar.get(Calendar.MONTH)-1==bulan && calendar.get(Calendar.YEAR)==tahun){
-                    laporanBulanan.add(cat);
-                }
-            }
+            List<CatatanKeuangan>laporanBulanan = catatanKeuanganRepository.listBulanan(bulan, tahun);
             if(laporanBulanan.isEmpty()){
                 throw new RuntimeException("Tidak ada catatan bulan ini");
             }
@@ -116,6 +97,46 @@ public class CatatanKeuanganService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public Integer pemasukanHarian(Date tanggal){
+        Integer pemasukanHarian =  catatanKeuanganRepository.pemasukanHarian(tanggal);
+        if(pemasukanHarian ==null){
+            return 0;
+        }
+        else {
+            return pemasukanHarian;
+        }
+    }
+
+    public Integer pengeluaranHarian(Date tanggal){
+        Integer pengeluaranHarian =  catatanKeuanganRepository.pengeluaranHarian(tanggal);
+        if(pengeluaranHarian ==null){
+            return 0;
+        }
+        else {
+            return pengeluaranHarian;
+        }
+    }
+
+    public Integer pemasukanBulanan(Integer bulan, Integer tahun){
+        Integer pemasukanBulanan = catatanKeuanganRepository.pemasukanBulanan(bulan, tahun);
+        if(pemasukanBulanan == null){
+            return 0;
+        }
+        else {
+            return pemasukanBulanan;
+        }
+    }
+
+    public Integer pengeluaranBulanan(Integer bulan, Integer tahun){
+        Integer pengeluaranBulanan = catatanKeuanganRepository.pengeluaranBulanan(bulan, tahun);
+        if(pengeluaranBulanan == null){
+            return 0;
+        }
+        else {
+            return pengeluaranBulanan;
+        }
     }
 
 

@@ -35,9 +35,9 @@ public class PenggunaService {
         }
     }
 
-    public void delete(String Id) {
+    public void delete() {
         try{
-            penggunaRepository.delete(Id);
+            penggunaRepository.delete();
         }
         catch (Exception e){
             throw new RuntimeException(e);

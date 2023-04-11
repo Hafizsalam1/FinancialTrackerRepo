@@ -61,13 +61,11 @@ public class App {
                 System.out.println("2. Lihat laporan harian");
                 System.out.println("3. Lihat laporan bulanan");
                 System.out.println("4. Tambah catatan finansial");
-                System.out.println("5. Update catatan finansial berdasarkan id");
-                System.out.println("6. Hapus catatan finansial berdasarkan id");
-                System.out.println("7. Hapus semua catatan finansial");
-                System.out.println("8. Cari catatan berdasarkan id");
-                System.out.println("9. Info Pengguna");
-                System.out.println("10. Hapus Pengguna");
-                System.out.println("11. Keluar");
+                System.out.println("5. Hapus catatan finansial berdasarkan id");
+                System.out.println("6. Cari catatan berdasarkan id");
+                System.out.println("7. Info Pengguna");
+                System.out.println("8. Hapus Pengguna");
+                System.out.println("9. Keluar");
                 System.out.println("Masukkan menu yang diinginkan!");
 
 
@@ -88,12 +86,12 @@ public class App {
                         catatanKeuanganController.laporanHarian(input3);
                         break;
                     case 3:
-                        System.out.println("Masukkan bulan dari catatan finansial yang ingin dilihat");
+                        System.out.println("Masukkan bulan dari catatan finansial yang ingin dilihat (contoh: 02)");
                         Scanner input4 = new Scanner(System.in);
-                        int bulan= Integer.parseInt(input4.nextLine());
-                        System.out.println("Masukkan tahun dari catatan finansial yang ingin dilihat");
+                        Integer bulan= Integer.parseInt(input4.nextLine());
+                        System.out.println("Masukkan tahun dari catatan finansial yang ingin dilihat (contoh: 2020)");
                         Scanner tahun = new Scanner(System.in);
-                        int tahun1 = Integer.parseInt(tahun.nextLine());
+                        Integer tahun1 = Integer.parseInt(tahun.nextLine());
                         catatanKeuanganController.laporanBulanan(bulan, tahun1);
                         break;
                     case 4:
@@ -107,7 +105,7 @@ public class App {
                         System.out.println("Masukkan besarnya(dalam rupiah)");
                         Scanner input9 = new Scanner(System.in);
                         Integer besarnya = Integer.parseInt(input9.nextLine());
-                        System.out.println("Masukkan tanggal");
+                        System.out.println("Masukkan tanggal(YYY-MM-DD)");
                         Scanner input10 = new Scanner(System.in);
                         Date input11 = org.example.Util.stringToDate.generate(new String(input10.nextLine()));
                         catatanKeuangan.setDate(input11);
@@ -118,57 +116,30 @@ public class App {
                         break;
 
                     case 5:
-                        System.out.println("Masukkan id dari catatan finansial yang ingin diupdate");
-                        Scanner input17 = new Scanner(System.in);
-                        String id = new String(input17.nextLine());
-                        CatatanKeuangan catatanKeuangan1 = new CatatanKeuangan();
-                        System.out.println("Masukkan nama kegiatan finansial");
-                        Scanner input12 = new Scanner(System.in);
-                        String nama1 = new String(input12.nextLine());
-                        System.out.println("Masukkan jenis catatan (pemasukan atau pengeluaran)");
-                        Scanner input13 = new Scanner(System.in);
-                        org.example.Util.JenisKegiatan jenisKegiatan1 = org.example.Util.JenisKegiatan.valueOf(input13.nextLine());
-                        System.out.println("Masukkan besarnya(dalam rupiah)");
-                        Scanner input14 = new Scanner(System.in);
-                        int besarnya1 = Integer.parseInt(input14.nextLine());
-                        System.out.println("Masukkan tanggal");
-                        Scanner input15 = new Scanner(System.in);
-                        Date input16 = org.example.Util.stringToDate.generate(new String(input15.nextLine()));
-                        catatanKeuangan1.setDate(input16);
-                        catatanKeuangan1.setNamaKegiatanFinansial(nama1);
-                        catatanKeuangan1.setBesarnya(besarnya1);
-                        catatanKeuangan1.setJenisKegiatan(jenisKegiatan1);
-                        catatanKeuanganController.update(catatanKeuangan1, id);
-                        break;
-
-                    case 6:
                         System.out.println("Masukkan id dari catatan finansial yang ingin dihapus");
                         Scanner input18 = new Scanner(System.in);
                         String id1 = new String(input18.nextLine());
                         catatanKeuanganController.delete(id1);
                         break;
 
-                    case 7:
-                        catatanKeuanganController.deleteAll();
-                        break;
 
-                    case 8:
+                    case 6:
                         System.out.println("Masukkan id dari catatan finansial yang dicari");
                         Scanner input19 = new Scanner(System.in);
                         String id2 = new String(input19.nextLine());
-                        catatanKeuanganController.delete(id2);
+                        catatanKeuanganController.findId(id2);
                         break;
 
-                    case 9:
+                    case 7:
                         System.out.println(penggunaService.getAll().get(0));
                         break;
-                    case 10:
-                        penggunaCotroller.delete(penggunaService.getAll().get(0).getId());
+                    case 8:
+                        penggunaCotroller.delete();
                         catatanKeuanganController.deleteAll();
                         Run();
                         break;
 
-                    case 11:
+                    case 9:
                         System.exit(0);
                 }
 
