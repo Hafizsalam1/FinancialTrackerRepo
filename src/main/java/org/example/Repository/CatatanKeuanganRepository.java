@@ -73,8 +73,14 @@ public class CatatanKeuanganRepository {
 
     public void delete(String id) throws Exception {
         Integer saldoDihapus = findByid(id).getBesarnya();
+        CatatanKeuangan catatanKeuangan = findByid(id);
             jdbcTemplate.update(SQL_DELETE, id);
-            jdbcTemplate.update(SQL_CHANGE_SALDO, (penggunaRepository.getAll().get(0).getSaldoAwal() + saldoDihapus), penggunaRepository.getAll().get(0).getId());
+        if(catatanKeuangan.getJenisKegiatan().equals(JenisKegiatan.pemasukan)){
+            int result1 = jdbcTemplate.update(SQL_CHANGE_SALDO, (penggunaRepository.getAll().get(0).getSaldoAwal() - catatanKeuangan.getBesarnya()), penggunaRepository.getAll().get(0).getId());
+        }
+        if(catatanKeuangan.getJenisKegiatan().equals(JenisKegiatan.pengeluaran)){
+            int result1 = jdbcTemplate.update(SQL_CHANGE_SALDO, (penggunaRepository.getAll().get(0).getSaldoAwal() + catatanKeuangan.getBesarnya()), penggunaRepository.getAll().get(0).getId());
+        }
     }
 
     public void deleteAll() {
