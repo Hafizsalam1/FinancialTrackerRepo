@@ -50,6 +50,7 @@ public class CatatanKeuanganController {
             catatanKeuanganService.delete(id);
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             CatatanKeuanganKeseluruhan catatanKeuanganKeseluruhan  = modelMapper.map(catatanKeuangan, CatatanKeuanganKeseluruhan.class);
+            catatanKeuanganKeseluruhan.setSaldoTotal(penggunaService.getAll().get(0).getSaldoAwal());
             System.out.println("Berhasil menghapus catatan!");
             System.out.println(catatanKeuanganKeseluruhan);
     }
